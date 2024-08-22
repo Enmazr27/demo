@@ -3,6 +3,9 @@ package com.example.demo.sevice;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +21,7 @@ public class UserServiceImpl implements UserService{
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Override
+    @Cacheable(value = "users")
     public List<User> getALl() {
         logger.info("Fetching all users");
         try {
@@ -29,6 +33,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    @Cacheable(value = "users", key = "#id")
     public Optional<User> getUserById(Long id) {
         logger.info("Fetching user with ID: {}", id);
         try {
@@ -40,6 +45,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    @CachePut(value = "users", key = "#user.id")
     public User saveUser(User user) {
         logger.info("Saving new user: {}", user.getUsername());
         try {
@@ -51,6 +57,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    @CachePut(value = "users", key = "#id")
     public User updateUser(Long id, User updatedUser) {
         logger.info("Updating user with ID: {}", id);
         try {
@@ -72,6 +79,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    @CacheEvict(value = "users", key = "#id")
     public void deleteUser(Long id) {
         logger.info("Deleting user with ID: {}", id);
         try {
